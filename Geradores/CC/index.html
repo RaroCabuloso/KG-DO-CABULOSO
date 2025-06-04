@@ -3,145 +3,226 @@
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>Cabuloso 🕊 And TCC 🇸🇾 CC</title>
+    <title>Cabuloso 🕊 - CC gen</title>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css'>
-    <link rel='stylesheet' href='styles.css'> 
     <style>
-        /* styles.css */
+/* Estilo geral */
+body {
+    background-color: #000;
+    color: #00ff00;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 0;
+}
 
-        body {
-            background-color: #000; /* Fundo preto */
-            color: #00ff00; /* Texto verde neon */
-            font-family: 'Courier New', Courier, monospace; /* Fonte monoespaçada */
-        }
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: rgba(0,0,0,0.8);
+    border: 1px solid #00ff00;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #00ff00;
+}
 
-        .container {
-            border: 1px solid #00ff00; /* Borda verde neon */
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-        }
+.logo {
+    display: block;
+    margin: 0 auto 20px;
+    width: 150px;
+    filter: brightness(0) saturate(100%) invert(63%) sepia(94%) saturate(6235%) hue-rotate(88deg) brightness(117%) contrast(119%);
+}
 
-        .tab-container {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-        }
+h2 {
+    text-align: center;
+    color: #00ff00;
+    text-shadow: 0 0 5px #00ff00;
+    margin-bottom: 20px;
+}
 
-        .tab {
-            background-color: #111; /* Fundo escuro para as abas */
-            color: #00ff00; /* Texto verde neon */
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
+.tab-container {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
 
-        .tab.active {
-            background-color: #00ff00; /* Fundo verde para aba ativa */
-            color: #000; /* Texto preto para contraste */
-        }
+.tab {
+    background-color: transparent;
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+}
 
-        .panel {
-            background-color: #222; /* Fundo mais escuro para os painéis */
-            padding: 15px;
-            border-radius: 5px;
-        }
+.tab:hover, .tab.active {
+    background-color: #00ff00;
+    color: #000;
+    font-weight: bold;
+}
 
-        .input-group {
-            margin-bottom: 15px;
-        }
+.tab-content {
+    display: none;
+}
 
-        input[type="text"], input[type="number"] {
-            background-color: #333; /* Fundo escuro para inputs */
-            color: #00ff00; /* Texto verde neon */
-            border: 1px solid #00ff00; /* Borda verde */
-            padding: 10px;
-            width: 100%;
-        }
+.tab-content.active {
+    display: block;
+}
 
-        button {
-            background-color: #00ff00; /* Fundo verde para botões */
-            color: #000; /* Texto preto */
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
+.panel {
+    border: 1px solid #00ff00;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: rgba(0,0,0,0.7);
+}
 
-        .result {
-            background-color: #444; /* Fundo escuro para resultados */
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
+.input-group {
+    margin-bottom: 15px;
+}
 
-        .discord-button {
-            background-color: #7289da; /* Cor do Discord */
-            color: white; /* Texto branco */
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            margin-top: 20px;
-        }
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #000;
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    font-family: 'Courier New', Courier, monospace;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: transparent;
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+button:hover {
+    background-color: #00ff00;
+    color: #000;
+    font-weight: bold;
+}
+
+.result {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px dashed #00ff00;
+    background-color: rgba(0,0,0,0.7);
+    word-break: break-word;
+}
+
+.success {
+    color: #00ff00;
+}
+
+.error {
+    color: #ff0000;
+}
+
+/* Botão do Discord */
+.discord-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: transparent;
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.discord-button:hover {
+    background-color: #00ff00;
+    color: #000;
+    font-weight: bold;
+}
+
+/* Efeito Snowflake Hacker (verdes) */
+.snowflake {
+    position: absolute;
+    top: -10px;
+    background: #00ff00;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh);
+    }
+}
+        
     </style>
 </head>
 <body>
     <div class='snow'></div>
     <div class='container'>
-        <img src='juntar_se.png' alt='Cabuloso 🕊 And TCC 🇸🇾 CC's' class='logo'>
-        <h2>@odeiogogov</h2>
-        <div class='tab-container'>
-            <button class='tab active' data-tab='generate'>Gerar Cartões</button>
-            <button class='tab' data-tab='check-bin'>Verificar BIN</button>
-            <button class='tab' data-tab='check-luhn'>Em Desenvolvimento</button>
-            <button class='tab' data-tab='generate-data'>Gerar Dados</button>
-        </div>
-        
-        <div id='generate' class='tab-content active'>
-            <div class='panel'>
-                <div class='input-group'>
-                    <label for='bin-input'>BIN:</label>
-                    <input type='text' id='bin-input' maxlength='6' placeholder='Digite o BIN'>
-                </div>
-                <div class='input-group'>
-                    <label for='quantity'>Quantidade:</label>
-                    <input type='number' id='quantity' min='1' value='1'>
-                </div>
-                <button onclick='generateCards()'>Gerar Cartões</button>
-                <div id='card-result' class='result'></div>
+            <img src='juntar_se.png' alt='Cabuloso CC's' class='logo'>
+            <h2>@raro.cabuloso</h2>
+            <div class='tab-container'>
+                <button class='tab active' data-tab='generate'>Gerar Cartões</button>
+                <button class='tab' data-tab='check-bin'>Verificar BIN</button>
+                <button class='tab' data-tab='check-luhn'>Em Desenvolvimento</button>
+                <button class='tab' data-tab='generate-data'>Gerar Dados</button>
             </div>
-        </div>
+            
+            <div id='generate' class='tab-content active'>
+                <div class='panel'>
+                    <div class='input-group'>
+                        <label for='bin-input'>BIN:</label>
+                        <input type='text' id='bin-input' maxlength='6' placeholder='Digite o BIN'>
+                    </div>
+                    <div class='input-group'>
+                        <label for='quantity'>Quantidade:</label>
+                        <input type='number' id='quantity' min='1' value='1'>
+                    </div>
+                    <button onclick='generateCards()'>Gerar Cartões</button>
+                    <div id='card-result' class='result'></div>
+                </div>
+            </div>
 
-        <div id='check-bin' class='tab-content'>
-            <div class='panel'>
-                <div class='input-group'>
-                    <label for='bin-check'>BIN para verificar:</label>
-                    <input type='text' id='bin-check' maxlength='6' placeholder='Digite o BIN'>
+            <div id='check-bin' class='tab-content'>
+                <div class='panel'>
+                    <div class='input-group'>
+                        <label for='bin-check'>BIN para verificar:</label>
+                        <input type='text' id='bin-check' maxlength='6' placeholder='Digite o BIN'>
+                    </div>
+                    <button onclick='checkBin()'>Verificar BIN</button>
+                    <div id='bin-result' class='result'></div>
                 </div>
-                <button onclick='checkBin()'>Verificar BIN</button>
-                <div id='bin-result' class='result'></div>
             </div>
-        </div>
 
-        <div id='check-luhn' class='tab-content'>
-            <div class='panel'>
-                <div class='input-group'>
-                    <label for='card-check'>Número do Cartão:</label>
-                    <input type='text' id='card-check' placeholder='Ta em desenvolvimento aindacz'>
+            <div id='check-luhn' class='tab-content'>
+                <div class='panel'>
+                    <div class='input-group'>
+                        <label for='card-check'>Número do Cartão:</label>
+                        <input type='text' id='card-check' placeholder='Ta em desenvolvimento aindacz'>
+                    </div>
+                    <button onclick='checkLuhn()'>Em Desenvolvimento</button>
+                    <div id='luhn-result' class='result'></div>
                 </div>
-                <button onclick='checkLuhn()'>Em Desenvolvimento</button>
-                <div id='luhn-result' class='result'></div>
             </div>
-        </div>
 
-        <div id='generate-data' class='tab-content'>
-            <div class='panel'>
-                <button onclick='generateData()'>Gerar Dados Fictícios</button>
-                <div id='data-result' class='result'></div>
+            <div id='generate-data' class='tab-content'>
+                <div class='panel'>
+                    <button onclick='generateData()'>Gerar Dados Fictícios</button>
+                    <div id='data-result' class='result'></div>
+                </div>
             </div>
-        </div>
     </div>
 
-    <button class='discord-button' onclick='window.open("https://discord.gg/x8jTm8jwT6", "_blank")'>
+    <button class='discord-button' onclick='window.open('https://discord.gg/HeXUFKtQuE', '_blank')'>
         <i class='fab fa-discord'></i> Entre no nosso servidor do Discord
     </button>
 
@@ -235,6 +316,7 @@
                             CPF: ${cpf}<br>
                             Endereço: ${endereco}<br>
                             Cidade/Estado: ${cidade}|${estado}<br>
+                            
                         </div>
                     `;
                 })

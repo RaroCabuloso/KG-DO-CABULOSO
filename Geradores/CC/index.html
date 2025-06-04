@@ -162,13 +162,61 @@ button:hover {
         transform: translateY(100vh);
     }
 }
+
+/* NOVO: Botão de cópia */
+.copy-button {
+    background-color: transparent;
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    padding: 8px 15px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 0.9em;
+    transition: all 0.3s;
+    display: inline-block;
+}
+
+.copy-button:hover {
+    background-color: #00ff00;
+    color: #000;
+}
+
+.copy-success {
+    color: #00ff00;
+    display: inline-block;
+    margin-left: 10px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.copy-success.show {
+    opacity: 1;
+}
+
+/* NOVO: Estilo para lista de cartões */
+.cards-list {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: rgba(0, 30, 0, 0.3);
+    border-radius: 5px;
+}
+
+.card-item {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-bottom: 1px dotted #00ff00;
+}
+
+.card-item:last-child {
+    border-bottom: none;
+}
         
     </style>
 </head>
 <body>
     <div class='snow'></div>
     <div class='container'>
-            <img src='juntar_se.png' alt='Cabuloso CC's' class='logo'>
+            <img src='juntar_se.png' alt='Cabuloso CC' class='logo'>
             <h2>@raro.cabuloso</h2>
             <div class='tab-container'>
                 <button class='tab active' data-tab='generate'>Gerar Cartões</button>
@@ -222,25 +270,66 @@ button:hover {
             </div>
     </div>
 
-    <button class='discord-button' onclick='window.open('https://discord.gg/HeXUFKtQuE', '_blank')'>
+    <button class='discord-button' onclick='window.open("https://discord.gg/HeXUFKtQuE", "_blank")'>
         <i class='fab fa-discord'></i> Entre no nosso servidor do Discord
     </button>
 
     <script>
+        // Variável para armazenar os cartões gerados
+        let generatedCards = [];
+
         function generateCards() {
             const bin = document.getElementById('bin-input').value;
             const quantity = document.getElementById('quantity').value;
-            const cards = [];
+            generatedCards = [];
 
+            let cardsHTML = '';
+            
             for (let i = 0; i < quantity; i++) {
                 const cardNumber = `${bin}${Math.floor(Math.random() * 1000000000).toString().padStart(10, '0')}`;
                 const expirationDate = `${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}|${String(Math.floor(Math.random() * 10) + 23)}`;
                 const cvc = Math.floor(Math.random() * 900) + 100;
-
-                cards.push(`${cardNumber}|${expirationDate}|${cvc}<br><br>`);
+                
+                const cardData = `${cardNumber}|${expirationDate}|${cvc}`;
+                generatedCards.push(cardData);
+                
+                cardsHTML += `<div class="card-item">${cardData}</div>`;
             }
-
-            document.getElementById('card-result').innerHTML = cards.join('');
+            
+            // Adiciona o botão de cópia e a lista de cartões
+            document.getElementById('card-result').innerHTML = `
+                <button class="copy-button" onclick="copyAllCards()">
+                    <i class="fas fa-copy"></i> Copiar Todos os Cartões
+                </button>
+                <span id="copy-success" class="copy-success"></span>
+                <div class="cards-list">${cardsHTML}</div>
+            `;
+        }
+    
+        // NOVA FUNÇÃO: Copiar todos os cartões
+        function copyAllCards() {
+            if (generatedCards.length === 0) {
+                alert('Nenhum cartão gerado para copiar!');
+                return;
+            }
+            
+            const textToCopy = generatedCards.join('\n');
+            
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    const successEl = document.getElementById('copy-success');
+                    successEl.textContent = 'Copiado!';
+                    successEl.classList.add('show');
+                    
+                    // Remove o aviso após 2 segundos
+                    setTimeout(() => {
+                        successEl.classList.remove('show');
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Erro ao copiar: ', err);
+                    alert('Erro ao copiar os cartões!');
+                });
         }
     
         function checkBin() {
@@ -364,6 +453,7 @@ button:hover {
 
         window.onload = function() {
             createSnowflakes();
+            setInterval(createSnowflakes, 3000); // Cria novos flocos periodicamente
         };
     </script>
 </body>

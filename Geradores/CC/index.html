@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang='pt-br'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Cabuloso 🕊 And TCC 🇸🇾 CC</title>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css'>
+    <link rel='stylesheet' href='styles.css'> 
+    <style>
+        /* styles.css */
+
+        body {
+            background-color: #000; /* Fundo preto */
+            color: #00ff00; /* Texto verde neon */
+            font-family: 'Courier New', Courier, monospace; /* Fonte monoespaçada */
+        }
+
+        .container {
+            border: 1px solid #00ff00; /* Borda verde neon */
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        .tab-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            background-color: #111; /* Fundo escuro para as abas */
+            color: #00ff00; /* Texto verde neon */
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background-color: #00ff00; /* Fundo verde para aba ativa */
+            color: #000; /* Texto preto para contraste */
+        }
+
+        .panel {
+            background-color: #222; /* Fundo mais escuro para os painéis */
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        input[type="text"], input[type="number"] {
+            background-color: #333; /* Fundo escuro para inputs */
+            color: #00ff00; /* Texto verde neon */
+            border: 1px solid #00ff00; /* Borda verde */
+            padding: 10px;
+            width: 100%;
+        }
+
+        button {
+            background-color: #00ff00; /* Fundo verde para botões */
+            color: #000; /* Texto preto */
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .result {
+            background-color: #444; /* Fundo escuro para resultados */
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .discord-button {
+            background-color: #7289da; /* Cor do Discord */
+            color: white; /* Texto branco */
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class='snow'></div>
+    <div class='container'>
+        <img src='juntar_se.png' alt='Cabuloso 🕊 And TCC 🇸🇾 CC's' class='logo'>
+        <h2>@odeiogogov</h2>
+        <div class='tab-container'>
+            <button class='tab active' data-tab='generate'>Gerar Cartões</button>
+            <button class='tab' data-tab='check-bin'>Verificar BIN</button>
+            <button class='tab' data-tab='check-luhn'>Em Desenvolvimento</button>
+            <button class='tab' data-tab='generate-data'>Gerar Dados</button>
+        </div>
+        
+        <div id='generate' class='tab-content active'>
+            <div class='panel'>
+                <div class='input-group'>
+                    <label for='bin-input'>BIN:</label>
+                    <input type='text' id='bin-input' maxlength='6' placeholder='Digite o BIN'>
+                </div>
+                <div class='input-group'>
+                    <label for='quantity'>Quantidade:</label>
+                    <input type='number' id='quantity' min='1' value='1'>
+                </div>
+                <button onclick='generateCards()'>Gerar Cartões</button>
+                <div id='card-result' class='result'></div>
+            </div>
+        </div>
+
+        <div id='check-bin' class='tab-content'>
+            <div class='panel'>
+                <div class='input-group'>
+                    <label for='bin-check'>BIN para verificar:</label>
+                    <input type='text' id='bin-check' maxlength='6' placeholder='Digite o BIN'>
+                </div>
+                <button onclick='checkBin()'>Verificar BIN</button>
+                <div id='bin-result' class='result'></div>
+            </div>
+        </div>
+
+        <div id='check-luhn' class='tab-content'>
+            <div class='panel'>
+                <div class='input-group'>
+                    <label for='card-check'>Número do Cartão:</label>
+                    <input type='text' id='card-check' placeholder='Ta em desenvolvimento aindacz'>
+                </div>
+                <button onclick='checkLuhn()'>Em Desenvolvimento</button>
+                <div id='luhn-result' class='result'></div>
+            </div>
+        </div>
+
+        <div id='generate-data' class='tab-content'>
+            <div class='panel'>
+                <button onclick='generateData()'>Gerar Dados Fictícios</button>
+                <div id='data-result' class='result'></div>
+            </div>
+        </div>
+    </div>
+
+    <button class='discord-button' onclick='window.open("https://discord.gg/x8jTm8jwT6", "_blank")'>
+        <i class='fab fa-discord'></i> Entre no nosso servidor do Discord
+    </button>
+
+    <script>
+        function generateCards() {
+            const bin = document.getElementById('bin-input').value;
+            const quantity = document.getElementById('quantity').value;
+            const cards = [];
+
+            for (let i = 0; i < quantity; i++) {
+                const cardNumber = `${bin}${Math.floor(Math.random() * 1000000000).toString().padStart(10, '0')}`;
+                const expirationDate = `${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}|${String(Math.floor(Math.random() * 10) + 23)}`;
+                const cvc = Math.floor(Math.random() * 900) + 100;
+
+                cards.push(`${cardNumber}|${expirationDate}|${cvc}<br><br>`);
+            }
+
+            document.getElementById('card-result').innerHTML = cards.join('');
+        }
+    
+        function checkBin() {
+            const bin = document.getElementById('bin-check').value;
+            fetch(`https://data.handyapi.com/bin/${bin}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Extraindo os dados relevantes
+                    const result = {
+                        Status: data.Status,
+                        Scheme: data.Scheme,
+                        Type: data.Type,
+                        Issuer: data.Issuer,
+                        Country: data.Country.Name,
+                        CardTier: data.CardTier,
+                        Luhn: data.Luhn ? 'Valid' : 'Invalid'
+                    };
+
+                    // Exibindo de maneira bonita no HTML
+                    document.getElementById('bin-result').innerHTML = `
+                        <strong>Status:</strong> ${result.Status}<br>
+                        <strong>Scheme:</strong> ${result.Scheme}<br>
+                        <strong>Type:</strong> ${result.Type}<br>
+                        <strong>Issuer:</strong> ${result.Issuer}<br>
+                        <strong>Country:</strong> ${result.Country}<br>
+                        <strong>Card Tier:</strong> ${result.CardTier}<br>
+                        <strong>Luhn Check:</strong> ${result.Luhn}
+                    `;
+                })
+                .catch(error => {
+                    document.getElementById('bin-result').innerHTML = 'Error ao verificar BIN: ' + error.message;
+                });
+        }
+
+        function checkLuhn() {
+            const cardNumber = document.getElementById('card-check').value;
+            const isValid = luhnCheck(cardNumber);
+            document.getElementById('luhn-result').innerHTML = isValid ? 'ta em desenvolvimento aindacz.' : 'ta em desenvolvimento aindacz.';
+        }
+    
+        function luhnCheck(value) {
+            let sum = 0;
+            let alternate = false;
+            for (let i = value.length - 1; i >= 0; i--) {
+                let n = parseInt(value.charAt(i), 10);
+                if (alternate) {
+                    n *= 2;
+                    if (n > 9) n -= 9;
+                }
+                sum += n;
+                alternate = !alternate;
+            }
+            return sum % 10 === 0;
+        }
+    
+        function generateData() {
+            const url = "https://randomuser.me/api/?nat=BR";
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const user = data.results[0];
+                    const nome = user.name.first + ' ' + user.name.last;
+                    const cpf = user.id.value;
+                    const endereco = user.location.street.name + ', ' + user.location.street.number;
+                    const cidade = user.location.city;
+                    const estado = user.location.state;
+                    const email = user.email;
+
+                    document.getElementById('data-result').innerHTML = `
+                        <div class='success'>
+                            Nome: ${nome}<br>
+                            CPF: ${cpf}<br>
+                            Endereço: ${endereco}<br>
+                            Cidade/Estado: ${cidade}|${estado}<br>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    console.error("Error ao gerar dados:", error);
+                    document.getElementById('data-result').innerHTML = `
+                        <div class='error'>Error ao gerar dados: ${error.message}</div>
+                    `;
+                });
+        }
+
+        document.querySelectorAll('.tab').forEach(button => {
+            button.addEventListener('click', (e) => {
+                showTab(e.target.getAttribute('data-tab'));
+            });
+        });
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function createSnowflakes() {
+            const snowContainer = document.querySelector('.snow');
+            const snowflakeCount = 100;
+
+            for (let i = 0; i < snowflakeCount; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('snowflake');
+                snowflake.style.width = Math.random() * 5 + 2 + 'px';
+                snowflake.style.height = snowflake.style.width;
+                snowflake.style.left = Math.random() * 100 + 'vw';
+                snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+                snowflake.style.opacity = Math.random();
+                snowContainer.appendChild(snowflake);
+
+                snowflake.addEventListener('animationend', () => {
+                    snowflake.remove();
+                });
+            }
+        }
+
+        window.onload = function() {
+            createSnowflakes();
+        };
+    </script>
+</body>
+</html>

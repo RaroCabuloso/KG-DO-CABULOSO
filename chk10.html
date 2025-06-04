@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHK GG - Sistema de Verificação</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary: #00f3ff;
+            --secondary: #bd00ff;
+            --accent: #ff00c8;
+            --dark: #0a0a18;
+            --darker: #050510;
+            --text: #e0e0ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: var(--darker);
+            color: var(--text);
+            font-family: 'Share Tech Mono', monospace;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(11, 11, 40, 0.8) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(69, 0, 90, 0.6) 0%, transparent 20%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .cyber-border {
+            position: relative;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+            background: rgba(10, 15, 30, 0.7);
+            backdrop-filter: blur(5px);
+        }
+        
+        .cyber-border::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 2px solid var(--secondary);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary);
+        }
+        
+        .cyber-btn {
+            background: linear-gradient(45deg, var(--dark), var(--darker));
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 12px 25px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+        }
+        
+        .cyber-btn:hover {
+            background: linear-gradient(45deg, #0a1a2a, #050a15);
+            box-shadow: 0 0 20px var(--primary), 0 0 30px rgba(0, 243, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .cyber-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+        
+        .terminal-text {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--primary);
+            text-shadow: 0 0 5px rgba(0, 243, 255, 0.7);
+        }
+        
+        .status-card {
+            background: rgba(15, 10, 35, 0.7);
+            border: 1px solid var(--secondary);
+            box-shadow: 0 0 15px rgba(189, 0, 255, 0.3);
+            border-radius: 5px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(189, 0, 255, 0.5);
+        }
+        
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.1;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: rgba(0, 243, 255, 0.5);
+            box-shadow: 0 0 20px 5px rgba(0, 243, 255, 0.7);
+            animation: scan 3s linear infinite;
+            z-index: 100;
+        }
+        
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        .cyber-loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            border-top: 3px solid transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result-box {
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        
+        .result-box::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .result-box::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .result-box::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Efeitos de fundo -->
+    <div class="matrix-bg" id="matrixEffect"></div>
+    <div class="scan-line"></div>
+    
+    <div class="container py-4">
+        <!-- Cabeçalho -->
+        <div class="cyber-border rounded-lg p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="cyber-border rounded-circle p-2 mr-3">
+                        <i class="fas fa-user-secret fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h1 class="glow-text mb-0"><span class="text-primary">CHK</span> <span class="text-secondary">GG</span></h1>
+                        <p class="terminal-text mb-0">Sistema de Verificação de Dados</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex">
+                    <div class="status-card text-center mx-2">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <i class="fas fa-coins text-warning mr-2"></i>
+                            <span class="terminal-text">CRÉDITOS</span>
+                        </div>
+                        <h3 class="glow-text text-warning mb-0" id="creditCount">0</h3>
+                    </div>
+                    
+                    <div class="status-card text-center mx-2">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <i class="fas fa-check-circle text-success mr-2"></i>
+                            <span class="terminal-text">APROVADOS</span>
+                        </div>
+                        <h3 class="glow-text text-success mb-0" id="cLive">0</h3>
+                    </div>
+                    
+                    <div class="status-card text-center mx-2">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <i class="fas fa-times-circle text-danger mr-2"></i>
+                            <span class="terminal-text">REPROVADOS</span>
+                        </div>
+                        <h3 class="glow-text text-danger mb-0" id="cDie">0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Área de entrada de dados -->
+        <div class="cyber-border rounded-lg p-4 mb-4">
+            <h3 class="terminal-text mb-3"><i class="fas fa-database mr-2"></i>INSIRA OS DADOS PARA VERIFICAÇÃO</h3>
+            <textarea class="form-control terminal-text bg-dark text-primary mb-3" 
+                      style="resize: none; border: 1px solid var(--primary); height: 150px;" 
+                      id="lista" 
+                      placeholder="Cole seus dados aqui (um por linha)"></textarea>
+            
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="terminal-text">
+                    <i class="fas fa-cloud-upload-alt text-info mr-2"></i>
+                    <span>DADOS CARREGADOS: </span>
+                    <span id="carregadas">0</span>
+                </div>
+                
+                <div class="terminal-text">
+                    <i class="fas fa-hourglass-half text-warning mr-2"></i>
+                    <span>TESTADOS: </span>
+                    <span id="total">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Controles -->
+        <div class="cyber-border rounded-lg p-4 mb-4">
+            <div class="text-center mb-3">
+                <h3 class="terminal-text pulse" id="status_ccs">
+                    <i class="fas fa-pause-circle mr-2"></i>AGUARDANDO INÍCIO
+                </h3>
+            </div>
+            
+            <div class="d-flex justify-content-center">
+                <button class="cyber-btn mx-2" id="testar" onclick="iniciarVerificacao()">
+                    <i class="fas fa-play mr-2"></i>INICIAR VERIFICAÇÃO
+                </button>
+                <button class="cyber-btn mx-2" id="parar" disabled>
+                    <i class="fas fa-stop mr-2"></i>PARAR
+                </button>
+                <button class="cyber-btn mx-2" onclick="limparDados()">
+                    <i class="fas fa-broom mr-2"></i>LIMPAR
+                </button>
+            </div>
+        </div>
+        
+        <!-- Resultados -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="cyber-border rounded-lg p-3 h-100">
+                    <h4 class="terminal-text text-success mb-3">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        APROVADOS - <span id="cLive2">0</span>
+                    </h4>
+                    <div class="result-box" id="aprovadas"></div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <div class="cyber-border rounded-lg p-3 h-100">
+                    <h4 class="terminal-text text-danger mb-3">
+                        <i class="fas fa-times-circle mr-2"></i>
+                        REPROVADOS - <span id="cDie2">0</span>
+                    </h4>
+                    <div class="result-box" id="reprovadas"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Rodapé -->
+        <div class="text-center terminal-text mt-4">
+            <p>Sistema de Verificação CHK GG v2.0 | Desenvolvido com <i class="fas fa-heart text-danger"></i> para profissionais</p>
+            <p class="text-muted">© 2023 Todos os direitos reservados | Segurança em primeiro lugar</p>
+        </div>
+    </div>
+
+    <!-- Áudio para notificação -->
+    <audio id="audioLive" src="https://assets.mixkit.co/sfx/preview/mixkit-game-ball-tap-2073.mp3"></audio>
+    <audio id="audioDie" src="https://assets.mixkit.co/sfx/preview/mixkit-falling-male-scream-391.mp3"></audio>
+    
+    <script>
+        // Efeito Matrix no background
+        function createMatrixEffect() {
+            const container = document.getElementById('matrixEffect');
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*';
+            const fontSize = 14;
+            const columns = Math.floor(window.innerWidth / fontSize);
+            
+            // Cria colunas
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.style.position = 'absolute';
+                column.style.top = '-50px';
+                column.style.left = (i * fontSize) + 'px';
+                column.style.width = fontSize + 'px';
+                column.style.color = `rgba(0, ${200 + Math.random() * 55}, 255, ${0.1 + Math.random() * 0.3})`;
+                column.style.fontSize = fontSize + 'px';
+                column.style.fontFamily = 'monospace';
+                column.style.whiteSpace = 'nowrap';
+                column.style.writingMode = 'vertical-rl';
+                column.style.textOrientation = 'mixed';
+                container.appendChild(column);
+                
+                // Animação da coluna
+                animateColumn(column);
+            }
+            
+            function animateColumn(col) {
+                let length = 10 + Math.floor(Math.random() * 20);
+                let speed = 50 + Math.random() * 100;
+                let position = -length;
+                
+                function move() {
+                    position++;
+                    let content = '';
+                    for (let i = 0; i < length; i++) {
+                        let charPos = position - i;
+                        if (charPos >= 0 && charPos < length) {
+                            let charIndex = Math.floor(Math.random() * characters.length);
+                            content += characters.charAt(charIndex);
+                        } else {
+                            content += ' ';
+                        }
+                    }
+                    col.textContent = content;
+                    
+                    if (position < 100) {
+                        setTimeout(move, speed);
+                    } else {
+                        position = -length;
+                        setTimeout(move, 1000);
+                    }
+                }
+                
+                move();
+            }
+        }
+        
+        // Variáveis globais
+        let verificacaoAtiva = false;
+        let aprovados = 0;
+        let reprovados = 0;
+        let testados = 0;
+        let carregadas = 0;
+        let creditos = 100;
+        let requestsAtivas = [];
+        
+        // Atualiza contadores na interface
+        function atualizarContadores() {
+            $('#cLive').text(aprovados);
+            $('#cDie').text(reprovados);
+            $('#total').text(testados);
+            $('#carregadas').text(carregadas);
+            $('#cLive2').text(aprovados);
+            $('#cDie2').text(reprovados);
+            $('#creditCount').text(creditos);
+        }
+        
+        // Inicia a verificação
+        function iniciarVerificacao() {
+            const lista = $('#lista').val().trim();
+            
+            if (!lista) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Dados ausentes',
+                    text: 'Por favor, insira os dados para verificação!',
+                    background: '#0a0a18',
+                    color: '#e0e0ff',
+                    confirmButtonColor: '#00f3ff'
+                });
+                return;
+            }
+            
+            if (creditos < 1) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Créditos insuficientes',
+                    text: 'Você não tem créditos suficientes para realizar a verificação!',
+                    background: '#0a0a18',
+                    color: '#e0e0ff',
+                    confirmButtonColor: '#bd00ff'
+                });
+                return;
+            }
+            
+            const linhas = lista.split('\n');
+            carregadas = linhas.length;
+            testados = 0;
+            aprovados = 0;
+            reprovados = 0;
+            verificacaoAtiva = true;
+            
+            $('#testar').prop('disabled', true);
+            $('#parar').prop('disabled', false);
+            $('#status_ccs').html('<i class="fas fa-sync-alt spin mr-2"></i>VERIFICANDO DADOS...');
+            
+            // Limpa resultados anteriores
+            $('#aprovadas').empty();
+            $('#reprovadas').empty();
+            atualizarContadores();
+            
+            // Processa cada linha com concorrência limitada
+            const maxConcorrentes = 5;
+            let index = 0;
+            let ativos = 0;
+            
+            function processarProximo() {
+                if (!verificacaoAtiva || index >= linhas.length) return;
+                if (ativos >= maxConcorrentes) return;
+                
+                ativos++;
+                const linha = linhas[index++].trim();
+                
+                if (linha) {
+                    // Simulação de verificação (substituir pela API real)
+                    const tempo = 300 + Math.random() * 1200;
+                    const aprovado = Math.random() > 0.7;
+                    
+                    setTimeout(() => {
+                        if (!verificacaoAtiva) {
+                            ativos--;
+                            return;
+                        }
+                        
+                        testados++;
+                        creditos--;
+                        
+                        if (aprovado) {
+                            aprovados++;
+                            $('#aprovadas').prepend(`<div class="terminal-text text-success">${linha} <span class="text-warning">(APROVADA)</span></div>`);
+                            document.getElementById('audioLive').play();
+                        } else {
+                            reprovados++;
+                            $('#reprovadas').prepend(`<div class="terminal-text text-danger">${linha} <span class="text-warning">(REPROVADA)</span></div>`);
+                            document.getElementById('audioDie').play();
+                        }
+                        
+                        atualizarContadores();
+                        ativos--;
+                        processarProximo();
+                    }, tempo);
+                }
+                
+                processarProximo();
+            }
+            
+            // Inicia múltiplos processos
+            for (let i = 0; i < maxConcorrentes; i++) {
+                processarProximo();
+            }
+            
+            // Verifica término
+            const verificarTermino = setInterval(() => {
+                if (testados >= carregadas || !verificacaoAtiva) {
+                    clearInterval(verificarTermino);
+                    finalizarVerificacao();
+                }
+            }, 100);
+        }
+        
+        // Finaliza a verificação
+        function finalizarVerificacao() {
+            verificacaoAtiva = false;
+            $('#testar').prop('disabled', false);
+            $('#parar').prop('disabled', true);
+            
+            if (testados >= carregadas) {
+                $('#status_ccs').html(`<i class="fas fa-flag-checkered mr-2"></i>VERIFICAÇÃO CONCLUÍDA!`);
+                
+                Swal.fire({
+                    title: 'Verificação Concluída!',
+                    html: `<div class="terminal-text">
+                            <p>Aprovados: <span class="text-success">${aprovados}</span></p>
+                            <p>Reprovados: <span class="text-danger">${reprovados}</span></p>
+                            <p>Total: <span class="text-warning">${carregadas}</span></p>
+                           </div>`,
+                    icon: 'success',
+                    background: '#0a0a18',
+                    color: '#e0e0ff',
+                    confirmButtonColor: '#00f3ff',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                $('#status_ccs').html('<i class="fas fa-pause-circle mr-2"></i>VERIFICAÇÃO PAUSADA');
+            }
+        }
+        
+        // Limpa todos os dados
+        function limparDados() {
+            if (verificacaoAtiva) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Verificação em andamento',
+                    text: 'Finalize a verificação atual antes de limpar os dados.',
+                    background: '#0a0a18',
+                    color: '#e0e0ff',
+                    confirmButtonColor: '#bd00ff'
+                });
+                return;
+            }
+            
+            $('#lista').val('');
+            $('#aprovadas').empty();
+            $('#reprovadas').empty();
+            
+            aprovados = 0;
+            reprovados = 0;
+            testados = 0;
+            carregadas = 0;
+            
+            atualizarContadores();
+            $('#status_ccs').html('<i class="fas fa-pause-circle mr-2"></i>AGUARDANDO INÍCIO');
+        }
+        
+        // Evento para o botão Parar
+        $('#parar').click(function() {
+            if (verificacaoAtiva) {
+                verificacaoAtiva = false;
+                finalizarVerificacao();
+            }
+        });
+        
+        // Inicialização
+        $(document).ready(function() {
+            createMatrixEffect();
+            atualizarContadores();
+            
+            // Adiciona classe de rotação para ícones
+            $.fn.extend({
+                spin: function() {
+                    this.css('display', 'inline-block');
+                    this.css('animation', 'spin 1s linear infinite');
+                    return this;
+                }
+            });
+        });
+    </script>
+</body>
+  </html>

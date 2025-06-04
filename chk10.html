@@ -1,584 +1,621 @@
+
+
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHK GG - Sistema de Verificação</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        :root {
-            --primary: #00f3ff;
-            --secondary: #bd00ff;
-            --accent: #ff00c8;
-            --dark: #0a0a18;
-            --darker: #050510;
-            --text: #e0e0ff;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: var(--darker);
-            color: var(--text);
-            font-family: 'Share Tech Mono', monospace;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(11, 11, 40, 0.8) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(69, 0, 90, 0.6) 0%, transparent 20%);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        .cyber-border {
-            position: relative;
-            border: 1px solid var(--primary);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
-            background: rgba(10, 15, 30, 0.7);
-            backdrop-filter: blur(5px);
-        }
-        
-        .cyber-border::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            border: 2px solid var(--secondary);
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-        .glow-text {
-            text-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary);
-        }
-        
-        .cyber-btn {
-            background: linear-gradient(45deg, var(--dark), var(--darker));
-            color: var(--primary);
-            border: 1px solid var(--primary);
-            padding: 12px 25px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
-        }
-        
-        .cyber-btn:hover {
-            background: linear-gradient(45deg, #0a1a2a, #050a15);
-            box-shadow: 0 0 20px var(--primary), 0 0 30px rgba(0, 243, 255, 0.5);
-            transform: translateY(-2px);
-        }
-        
-        .cyber-btn:active {
-            transform: translateY(1px);
-        }
-        
-        .cyber-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.2), transparent);
-            transition: 0.5s;
-        }
-        
-        .cyber-btn:hover::before {
-            left: 100%;
-        }
-        
-        .terminal-text {
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--primary);
-            text-shadow: 0 0 5px rgba(0, 243, 255, 0.7);
-        }
-        
-        .status-card {
-            background: rgba(15, 10, 35, 0.7);
-            border: 1px solid var(--secondary);
-            box-shadow: 0 0 15px rgba(189, 0, 255, 0.3);
-            border-radius: 5px;
-            padding: 15px;
-            transition: all 0.3s ease;
-        }
-        
-        .status-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 20px rgba(189, 0, 255, 0.5);
-        }
-        
-        .matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            opacity: 0.1;
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
-        }
-        
-        .scan-line {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: rgba(0, 243, 255, 0.5);
-            box-shadow: 0 0 20px 5px rgba(0, 243, 255, 0.7);
-            animation: scan 3s linear infinite;
-            z-index: 100;
-        }
-        
-        @keyframes scan {
-            0% { top: 0; }
-            100% { top: 100%; }
-        }
-        
-        .cyber-loader {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid var(--primary);
-            border-radius: 50%;
-            border-top: 3px solid transparent;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .result-box {
-            max-height: 200px;
-            overflow-y: auto;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 10px;
-            border: 1px solid var(--secondary);
-            border-radius: 5px;
-            font-size: 0.9em;
-        }
-        
-        .result-box::-webkit-scrollbar {
-            width: 5px;
-        }
-        
-        .result-box::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
-        }
-        
-        .result-box::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-        }
-    </style>
-</head>
-<body>
-    <!-- Efeitos de fundo -->
-    <div class="matrix-bg" id="matrixEffect"></div>
-    <div class="scan-line"></div>
+
+<html class="loading" lang="en" data-textdirection="ltr">
+
+  <head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+
+    <meta name="description" content="Chameleon Admin is a modern Bootstrap 4 webapp &amp; admin dashboard html template with a large number of components, elegant design, clean and organized code.">
+
+    <meta name="keywords" content="admin template, Chameleon admin template, dashboard template, gradient admin template, responsive admin template, webapp, eCommerce dashboard, analytic dashboard">
+
+    <meta name="author" content="Niklausec">
+
+    <title>CHK GG(By RARO CABULOSO)</title>
+
+    <link rel="apple-touch-icon" href="../../theme-assets/images/ico/apple-icon-120.png">
+
     
-    <div class="container py-4">
-        <!-- Cabeçalho -->
-        <div class="cyber-border rounded-lg p-4 mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <div class="cyber-border rounded-circle p-2 mr-3">
-                        <i class="fas fa-user-secret fa-2x text-primary"></i>
-                    </div>
-                    <div>
-                        <h1 class="glow-text mb-0"><span class="text-primary">CHK</span> <span class="text-secondary">GG</span></h1>
-                        <p class="terminal-text mb-0">Sistema de Verificação de Dados</p>
-                    </div>
-                </div>
-                
-                <div class="d-flex">
-                    <div class="status-card text-center mx-2">
-                        <div class="d-flex align-items-center justify-content-center">
-                            <i class="fas fa-coins text-warning mr-2"></i>
-                            <span class="terminal-text">CRÉDITOS</span>
-                        </div>
-                        <h3 class="glow-text text-warning mb-0" id="creditCount">0</h3>
-                    </div>
-                    
-                    <div class="status-card text-center mx-2">
-                        <div class="d-flex align-items-center justify-content-center">
-                            <i class="fas fa-check-circle text-success mr-2"></i>
-                            <span class="terminal-text">APROVADOS</span>
-                        </div>
-                        <h3 class="glow-text text-success mb-0" id="cLive">0</h3>
-                    </div>
-                    
-                    <div class="status-card text-center mx-2">
-                        <div class="d-flex align-items-center justify-content-center">
-                            <i class="fas fa-times-circle text-danger mr-2"></i>
-                            <span class="terminal-text">REPROVADOS</span>
-                        </div>
-                        <h3 class="glow-text text-danger mb-0" id="cDie">0</h3>
-                    </div>
-                </div>
-            </div>
+
+      <link rel="stylesheet" href="use.fontawesome.com/releases/v5.5.0/css/all.css">
+
+    
+
+    
+
+    <link rel="shortcut icon" type="image/x-icon" href="theme-assets/images/logo/logo.png">
+
+    <link href="https://fonts.googleapis.com/css?family=Muli:300,300i,400,400i,600,600i,700,700i%7CComfortaa:300,400,700" rel="stylesheet">
+
+    <link href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+  </head>
+
+  <body class="vertical-layout vertical-menu 2-columns menu-expanded fixed-navbar" style="background: black;" data-open="click" data-menu="vertical-menu" data-color="bg-chartbg" data-col="2-columns">
+
+
+
+
+
+
+
+
+
+<div style="background:black; border: 1px solid white; width: 100%; height:auto; display: flex; justify-content: flex-start; align-items: center; position:absolute;border-bottom-left-radius: 20px;border-bottom-right-radius: 20px;">
+
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+
+
+  <div style="display: flex; align-items: center; margin-left: 25px;">
+
+    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24">
+
+      <g fill="none" stroke="blue" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+
+        <circle cx="12" cy="7" r="4"/>
+
+      </g>
+
+    </svg>
+
+    <span style="font-weight:500;font-size:20px;color: blue; margin-left: 5px;">CABULOSO CHK</span>
+
+  </div>
+
+
+
+  <div style="display: flex; align-items: center; margin-left: 20px;">
+
+    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24">
+
+      <path fill="none" stroke="orange" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 1v22m5-18H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+
+    </svg>
+
+    <span style="font-weight:500;font-size:20px;color: yellow; margin-left: 5px;">0</span>
+
+  </div>
+
+
+
+  <div style="display: flex; align-items: center; margin-left: 20px;">
+
+    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24">
+
+      <g fill="none" stroke="lime" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+
+        <path d="M22 4L12 14.01l-3-3"/>
+
+      </g>
+
+    </svg>
+
+    <span style="font-weight:500;font-size:20px;color: green; margin-left: 5px;">0</span>
+
+  </div>
+
+
+
+  <div style="display: flex; align-items: center; margin-left: 20px;">
+
+    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24">
+
+      <g fill="none" stroke="red" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+
+        <circle cx="12" cy="12" r="10"/>
+
+        <path d="m15 9l-6 6m0-6l6 6"/>
+
+      </g>
+
+    </svg>
+
+    <span style="font-weight:500;font-size:20px;color:#ff0000; margin-left: 5px;">0</span>
+
+  </div>
+
+
+
+
+
+</div>
+
+<br></br><p></p>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+<div style="display: flex; justify-content: center; align-items: center;">
+
+<div style="width: 80%;">
+
+    <textarea class="form-control bg-black " style="resize: none; text-align: center;border: solid white 1px; width: 100%;background:black;color:white;" rows="5" id="lista" placeholder="DB"></textarea><p></p>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+    <center>
+
+        <div class="badge badge-success badge-pill" style=" width:40%;color:white; padding: 10px 10px;border: solid white 1px;background:none;border-radius:5px;">
+
+            <i style="font-size:15px;color:#00ff00;" class="la la-check"></i>
+
+            <span style="font-size: 20px;"> Aprovados: </span>
+
+            <span style="font-size: 20px;" id="cLive">0</span>
+
         </div>
+
+
+
+        <div class="badge badge-success badge-pill" style=" width:40%;color:white; padding: 10px 10px;border: solid white 1px;background:none;border-radius:5px;">
+
+            <i style="color:red;font-size:15px;" class="la la-close"></i>
+
+            <span style="font-size: 20px;"> Reprovados</span>
+
+            <span style="font-size: 20px;" id="cDie">0</span>
+
+        </div>
+
+<p>
+
+</p>
+
+        <div class="badge badge-success badge-pill" style=" width:40%;color:white; padding: 10px 10px;border: solid white 1px;background:none;border-radius:5px;">
+
+            <i style="font-size:15px;color:orange;" class="la la-clock-o"></i>
+
+            <span style="font-size: 20px;"> Testados</span>
+
+            <span style="font-size: 20px;" id="total">0</span>
+
+        </div>
+
+
+
+        <div class="badge badge-success badge-pill" style=" width:40%;color:white; padding: 10px 10px;border: solid white 1px;background:none;border-radius:5px;">
+
+            <i style="color:#0000ff;font-size:15px;" class="la la-cloud-upload"></i>
+
+            <span style="font-size: 20px;"> Carregados</span>
+
+            <span style="font-size: 20px;" id="carregadas">0</span>
+
+        </div>
+
+        <p></p>
+
         
-        <!-- Área de entrada de dados -->
-        <div class="cyber-border rounded-lg p-4 mb-4">
-            <h3 class="terminal-text mb-3"><i class="fas fa-database mr-2"></i>INSIRA OS DADOS PARA VERIFICAÇÃO</h3>
-            <textarea class="form-control terminal-text bg-dark text-primary mb-3" 
-                      style="resize: none; border: 1px solid var(--primary); height: 150px;" 
-                      id="lista" 
-                      placeholder="Cole seus dados aqui (um por linha)"></textarea>
-            
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="terminal-text">
-                    <i class="fas fa-cloud-upload-alt text-info mr-2"></i>
-                    <span>DADOS CARREGADOS: </span>
-                    <span id="carregadas">0</span>
-                </div>
-                
-                <div class="terminal-text">
-                    <i class="fas fa-hourglass-half text-warning mr-2"></i>
-                    <span>TESTADOS: </span>
-                    <span id="total">0</span>
-                </div>
-            </div>
+
+          <center>
+
+          	
+
+        <div class="mb-3">
+
+        	
+
+            <button style="width:25%; background:none; color:white; font-weight:500;" type="button" class="btn btn-light btn-min-width mr-1 mb-1" id="testar" onclick="enviar()">INICIAR</button>
+
+            <button style="width:25%; background:none; color:white; font-weight:500:" type="button" class="btn btn-light btn-min-width mr-1 mb-1" id="parar" disabled="true">PARAR</button>
+
+            <a href="../../" class="btn btn-primary btn-min-width mr-1 mb-1" style="width:25%;background:none; borde:1cm red;color:white;">VOLTAR</a>
+
         </div>
+
+    </center>
+
+        </div>
+
         
-        <!-- Controles -->
-        <div class="cyber-border rounded-lg p-4 mb-4">
-            <div class="text-center mb-3">
-                <h3 class="terminal-text pulse" id="status_ccs">
-                    <i class="fas fa-pause-circle mr-2"></i>AGUARDANDO INÍCIO
-                </h3>
-            </div>
-            
-            <div class="d-flex justify-content-center">
-                <button class="cyber-btn mx-2" id="testar" onclick="iniciarVerificacao()">
-                    <i class="fas fa-play mr-2"></i>INICIAR VERIFICAÇÃO
-                </button>
-                <button class="cyber-btn mx-2" id="parar" disabled>
-                    <i class="fas fa-stop mr-2"></i>PARAR
-                </button>
-                <button class="cyber-btn mx-2" onclick="limparDados()">
-                    <i class="fas fa-broom mr-2"></i>LIMPAR
-                </button>
-            </div>
+
+        <div>
+
+    </center>
+
+
+
+    <center>
+
+        <div style="background:black; color:white; border: solid white 1px; border-radius:10px;" class="text-center text-light mt-3">
+
+            <h4 class="text-light" id="status_ccs">AGUARDANDO INICIO</h4>
+
         </div>
-        
-        <!-- Resultados -->
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <div class="cyber-border rounded-lg p-3 h-100">
-                    <h4 class="terminal-text text-success mb-3">
-                        <i class="fas fa-check-circle mr-2"></i>
-                        APROVADOS - <span id="cLive2">0</span>
-                    </h4>
-                    <div class="result-box" id="aprovadas"></div>
-                </div>
+
+    </center>
+
+
+
+    <div class="col-md-12 mt-3 p-0">
+
+        <div style="background:black; color:white; border: solid white 1px; border-radius:10px;" class="card bg-black text-light">
+
+            <div  style="position: absolute;top: 0;right: 0;">
+
+                <button style="background:black; color:white; border: solid white 1px; border-radius:10px;" id="mostra" class="btn btn-primary" style="background:black;padding: 2px 5px;"><i class="la la-external-link-square" style="background:black;color:white;font-size: 30px;"></i></button>
+
             </div>
-            
-            <div class="col-md-6 mb-3">
-                <div class="cyber-border rounded-lg p-3 h-100">
-                    <h4 class="terminal-text text-danger mb-3">
-                        <i class="fas fa-times-circle mr-2"></i>
-                        REPROVADOS - <span id="cDie2">0</span>
-                    </h4>
-                    <div class="result-box" id="reprovadas"></div>
-                </div>
+
+            <div class="card-body">
+
+                <h6 style="color:black;font-weight: bold;" class="card-title text-light" >Aprovados - <span  id="cLive2" class="badge badge-success" style="color:black;background:white;">0</span></h6>
+
+                <div id="bode"><span id=".aprovadas" class="aprovadas"></span></div>
+
             </div>
+
         </div>
-        
-        <!-- Rodapé -->
-        <div class="text-center terminal-text mt-4">
-            <p>Sistema de Verificação CHK GG v2.0 | Desenvolvido com <i class="fas fa-heart text-danger"></i> para profissionais</p>
-            <p class="text-muted">© 2023 Todos os direitos reservados | Segurança em primeiro lugar</p>
-        </div>
+
     </div>
 
-    <!-- Áudio para notificação -->
-    <audio id="audioLive" src="https://assets.mixkit.co/sfx/preview/mixkit-game-ball-tap-2073.mp3"></audio>
-    <audio id="audioDie" src="https://assets.mixkit.co/sfx/preview/mixkit-falling-male-scream-391.mp3"></audio>
+
+
+    <div class="col-md-12 mt-3 p-0">
+
+        <div style="background:black; color:white; border: solid white 1px; border-radius:10px;" class="card bg-black text-light">
+
+            <div  style=" position: absolute;top: 0;right: 0;">
+
+                <button style="background:black; color:white; border: solid white 1px; border-radius:10px;" id="mostra2" class="btn btn-primary" style=" background:black; padding: 2px 5px;"><i class="la la-external-link-square" style="background:black;color:white;font-size: 30px;"></i></button>
+
+            </div>
+
+            <div class="card-body">
+
+                <h6 style="font-weight: bold;" class="card-title text-light">Reprovados - <span  id="cDie2" class="badge badge-danger" style="color:black;background:white;">0</span></h6>
+
+                <div id="bode2"><span id=".reprovadas" class="reprovadas"></span></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
     
-    <script>
-        // Efeito Matrix no background
-        function createMatrixEffect() {
-            const container = document.getElementById('matrixEffect');
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*';
-            const fontSize = 14;
-            const columns = Math.floor(window.innerWidth / fontSize);
-            
-            // Cria colunas
-            for (let i = 0; i < columns; i++) {
-                const column = document.createElement('div');
-                column.style.position = 'absolute';
-                column.style.top = '-50px';
-                column.style.left = (i * fontSize) + 'px';
-                column.style.width = fontSize + 'px';
-                column.style.color = `rgba(0, ${200 + Math.random() * 55}, 255, ${0.1 + Math.random() * 0.3})`;
-                column.style.fontSize = fontSize + 'px';
-                column.style.fontFamily = 'monospace';
-                column.style.whiteSpace = 'nowrap';
-                column.style.writingMode = 'vertical-rl';
-                column.style.textOrientation = 'mixed';
-                container.appendChild(column);
-                
-                // Animação da coluna
-                animateColumn(column);
-            }
-            
-            function animateColumn(col) {
-                let length = 10 + Math.floor(Math.random() * 20);
-                let speed = 50 + Math.random() * 100;
-                let position = -length;
-                
-                function move() {
-                    position++;
-                    let content = '';
-                    for (let i = 0; i < length; i++) {
-                        let charPos = position - i;
-                        if (charPos >= 0 && charPos < length) {
-                            let charIndex = Math.floor(Math.random() * characters.length);
-                            content += characters.charAt(charIndex);
-                        } else {
-                            content += ' ';
-                        }
-                    }
-                    col.textContent = content;
-                    
-                    if (position < 100) {
-                        setTimeout(move, speed);
-                    } else {
-                        position = -length;
-                        setTimeout(move, 1000);
-                    }
-                }
-                
-                move();
-            }
-        }
-        
-        // Variáveis globais
-        let verificacaoAtiva = false;
-        let aprovados = 0;
-        let reprovados = 0;
-        let testados = 0;
-        let carregadas = 0;
-        let creditos = 100;
-        let requestsAtivas = [];
-        
-        // Atualiza contadores na interface
-        function atualizarContadores() {
-            $('#cLive').text(aprovados);
-            $('#cDie').text(reprovados);
-            $('#total').text(testados);
-            $('#carregadas').text(carregadas);
-            $('#cLive2').text(aprovados);
-            $('#cDie2').text(reprovados);
-            $('#creditCount').text(creditos);
-        }
-        
-        // Inicia a verificação
-        function iniciarVerificacao() {
-            const lista = $('#lista').val().trim();
-            
-            if (!lista) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Dados ausentes',
-                    text: 'Por favor, insira os dados para verificação!',
-                    background: '#0a0a18',
-                    color: '#e0e0ff',
-                    confirmButtonColor: '#00f3ff'
-                });
-                return;
-            }
-            
-            if (creditos < 1) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Créditos insuficientes',
-                    text: 'Você não tem créditos suficientes para realizar a verificação!',
-                    background: '#0a0a18',
-                    color: '#e0e0ff',
-                    confirmButtonColor: '#bd00ff'
-                });
-                return;
-            }
-            
-            const linhas = lista.split('\n');
-            carregadas = linhas.length;
-            testados = 0;
-            aprovados = 0;
-            reprovados = 0;
-            verificacaoAtiva = true;
-            
-            $('#testar').prop('disabled', true);
-            $('#parar').prop('disabled', false);
-            $('#status_ccs').html('<i class="fas fa-sync-alt spin mr-2"></i>VERIFICANDO DADOS...');
-            
-            // Limpa resultados anteriores
-            $('#aprovadas').empty();
-            $('#reprovadas').empty();
-            atualizarContadores();
-            
-            // Processa cada linha com concorrência limitada
-            const maxConcorrentes = 5;
-            let index = 0;
-            let ativos = 0;
-            
-            function processarProximo() {
-                if (!verificacaoAtiva || index >= linhas.length) return;
-                if (ativos >= maxConcorrentes) return;
-                
-                ativos++;
-                const linha = linhas[index++].trim();
-                
-                if (linha) {
-                    // Simulação de verificação (substituir pela API real)
-                    const tempo = 300 + Math.random() * 1200;
-                    const aprovado = Math.random() > 0.7;
-                    
-                    setTimeout(() => {
-                        if (!verificacaoAtiva) {
-                            ativos--;
-                            return;
-                        }
-                        
-                        testados++;
-                        creditos--;
-                        
-                        if (aprovado) {
-                            aprovados++;
-                            $('#aprovadas').prepend(`<div class="terminal-text text-success">${linha} <span class="text-warning">(APROVADA)</span></div>`);
-                            document.getElementById('audioLive').play();
-                        } else {
-                            reprovados++;
-                            $('#reprovadas').prepend(`<div class="terminal-text text-danger">${linha} <span class="text-warning">(REPROVADA)</span></div>`);
-                            document.getElementById('audioDie').play();
-                        }
-                        
-                        atualizarContadores();
-                        ativos--;
-                        processarProximo();
-                    }, tempo);
-                }
-                
-                processarProximo();
-            }
-            
-            // Inicia múltiplos processos
-            for (let i = 0; i < maxConcorrentes; i++) {
-                processarProximo();
-            }
-            
-            // Verifica término
-            const verificarTermino = setInterval(() => {
-                if (testados >= carregadas || !verificacaoAtiva) {
-                    clearInterval(verificarTermino);
-                    finalizarVerificacao();
-                }
-            }, 100);
-        }
-        
-        // Finaliza a verificação
-        function finalizarVerificacao() {
-            verificacaoAtiva = false;
-            $('#testar').prop('disabled', false);
-            $('#parar').prop('disabled', true);
-            
-            if (testados >= carregadas) {
-                $('#status_ccs').html(`<i class="fas fa-flag-checkered mr-2"></i>VERIFICAÇÃO CONCLUÍDA!`);
-                
-                Swal.fire({
-                    title: 'Verificação Concluída!',
-                    html: `<div class="terminal-text">
-                            <p>Aprovados: <span class="text-success">${aprovados}</span></p>
-                            <p>Reprovados: <span class="text-danger">${reprovados}</span></p>
-                            <p>Total: <span class="text-warning">${carregadas}</span></p>
-                           </div>`,
-                    icon: 'success',
-                    background: '#0a0a18',
-                    color: '#e0e0ff',
-                    confirmButtonColor: '#00f3ff',
-                    confirmButtonText: 'OK'
-                });
-            } else {
-                $('#status_ccs').html('<i class="fas fa-pause-circle mr-2"></i>VERIFICAÇÃO PAUSADA');
-            }
-        }
-        
-        // Limpa todos os dados
-        function limparDados() {
-            if (verificacaoAtiva) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Verificação em andamento',
-                    text: 'Finalize a verificação atual antes de limpar os dados.',
-                    background: '#0a0a18',
-                    color: '#e0e0ff',
-                    confirmButtonColor: '#bd00ff'
-                });
-                return;
-            }
-            
-            $('#lista').val('');
-            $('#aprovadas').empty();
-            $('#reprovadas').empty();
-            
-            aprovados = 0;
-            reprovados = 0;
-            testados = 0;
-            carregadas = 0;
-            
-            atualizarContadores();
-            $('#status_ccs').html('<i class="fas fa-pause-circle mr-2"></i>AGUARDANDO INÍCIO');
-        }
-        
-        // Evento para o botão Parar
-        $('#parar').click(function() {
-            if (verificacaoAtiva) {
-                verificacaoAtiva = false;
-                finalizarVerificacao();
-            }
+
+
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+
+
+    <!-- BEGIN VENDOR JS-->
+
+    <script src="theme-assets/vendors/js/vendors.min.js" type="text/javascript"></script>
+
+    <!-- BEGIN VENDOR JS-->
+
+    <!-- BEGIN PAGE VENDOR JS-->
+
+    <script src="theme-assets/vendors/js/charts/chartist.min.js" type="text/javascript"></script>
+
+    <!-- END PAGE VENDOR JS-->
+
+    <!-- BEGIN CHAMELEON  JS-->
+
+    <script src="theme-assets/js/core/app-menu-lite.js" type="text/javascript"></script>
+
+    <script src="theme-assets/js/core/app-lite.js" type="text/javascript"></script>
+
+    <!-- END CHAMELEON  JS-->
+
+    <!-- BEGIN PAGE LEVEL JS-->
+
+    <script src="theme-assets/js/scripts/pages/dashboard-lite.js" type="text/javascript"></script>
+
+    
+
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+    <!-- END PAGE LEVEL JS-->
+
+    <script type="text/javascript">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+        $(document).ready(function(){
+
+            $("#bode").hide();
+
+            $("#esconde").show();
+
+            $('#mostra').click(function(){$("#bode").slideToggle();});
+
         });
+
+        $(document).ready(function(){
+
+            $("#bode2").hide();
+
+            $("#esconde2").show();
+
+            $('#mostra2').click(function(){$("#bode2").slideToggle();});
+
+        });
+
+
+
+
+
+
+
+
+
+
+
+// set audios vars.
+
+var audioLive = new Audio('live.mp3');
+
+
+
+
+
+
+
+
+
+
+
+
+
         
-        // Inicialização
-        $(document).ready(function() {
-            createMatrixEffect();
-            atualizarContadores();
-            
-            // Adiciona classe de rotação para ícones
-            $.fn.extend({
-                spin: function() {
-                    this.css('display', 'inline-block');
-                    this.css('animation', 'spin 1s linear infinite');
-                    return this;
-                }
+
+        
+
+        
+
+        // Exemplo de uso
+
+        
+
+
+
+      
+
+      
+
+      
+
+
+
+        function enviar() {
+
+        	
+
+        var listado = document.getElementById("lista").value
+
+      
+
+
+
+
+
+        
+
+    
+
+        
+
+        	
+
+            var linha = $("#lista").val();
+
+            var linhaenviar = linha.split("\n");
+
+            var total = linhaenviar.length;
+
+            var ap = 0;
+
+            var rp = 0;
+
+            $('#testar').attr('disabled', 'disabled');
+
+            $('#parar').attr('disabled', null);
+
+            linhaenviar.forEach(function(value, index) {
+
+              
+
+                setTimeout(
+
+                    function() {
+
+                        var ajaxCall = $.ajax({
+
+                            url: 'api.php?lista=' + value,
+
+                            type: 'GET',
+
+                            async: true,
+
+                            success: function(resultado) {
+
+                                if (resultado.match("Aprovada") || resultado.match("CUSTOM")) {
+
+                                    removelinha();
+
+                                    ap++;
+
+                                    aprovadas(resultado + "");
+
+									audioLive.play();
+
+                                    $('#status_ccs').html('Aprovada');
+
+                                }else {
+
+                                    removelinha();
+
+                                    rp++;
+
+                                    reprovadas(resultado + "");
+
+                                    
+
+                                    $('#status_ccs').html('Reprovada');
+
+                                }
+
+                                $('#carregadas').html(total);
+
+                                var fila = parseInt(ap) + parseInt(rp);
+
+                                $('#cLive').html(ap);
+
+                                $('#cDie').html(rp);
+
+                                $('#total').html(fila);
+
+                                $('#cLive2').html(ap);
+
+                                $('#cDie2').html(rp);
+
+
+
+
+
+
+
+
+
+                                if (fila == total) {
+
+                                   $('#testar').attr('disabled', null);
+
+                                    $('#parar').attr('disabled', 'disabled');
+
+                                    $('#lista').attr('disabled', null);
+
+                                    // audio.play();
+
+                                    document.getElementById("status_ccs").innerHTML = "FINALIZADO";
+
+                                    setTimeout(function() {
+
+                                        document.getElementById("status_ccs").innerHTML = "AGUARDANDO INICIO...";
+
+                                    }, 2000);
+
+                                }
+
+                            }
+
+                        });
+
+                        $('#parar').click(function () {
+
+                            ajaxCall.abort();
+
+                            $('#testar').attr('disabled', null);
+
+                            $('#parar').attr('disabled', 'disabled');
+
+                            $('#lista').attr('disabled', null);
+
+                             var st = 'PAUSADO';
+
+                            $('#status_ccs').html(st);
+
+                        });
+
+                    }, 20* index);
+
+
+
             });
-        });
+
+        }
+
+        function aprovadas(str) {
+
+            $(".aprovadas").prepend(str + "<br>");
+
+        }
+
+        function reprovadas(str) {
+
+            $(".reprovadas").prepend(str + "<br>");
+
+        }
+
+        function removelinha() {
+
+            var lines = $("#lista").val().split('\n');
+
+            lines.splice(0, 1);
+
+            $("#lista").val(lines.join("\n"));
+
+        }
+
+      
+
     </script>
-</body>
-  </html>
+
+	<center><h2 class="text-light"><b><span class='badge badge-danger'></span></b></h2></center><br></br><br></br><br></br><br></br><br></br><br></br><br></br>
+
+	<center><h class="text-light"><b></b></h></center>
+
+  </body>
+
+</html>
